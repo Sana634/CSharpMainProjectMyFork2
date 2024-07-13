@@ -16,12 +16,26 @@ namespace UnitBrains.Player
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
-            ///////////////////////////////////////
-            // Homework 1.3 (1st block, 3rd module)
-            ///////////////////////////////////////           
-            var projectile = CreateProjectile(forTarget);
-            AddProjectileToList(projectile, intoList);
-            ///////////////////////////////////////
+
+            //Для этого получи текущую температуру с помощью метода GetTemperature
+            //И если текущая температура больше или равна температуре перегрева - overheatTemperature, то выполнение метода следует прервать
+
+            while (GetTemperature () >= OverheatTemperature)
+                {
+                break;
+                }
+            
+            for (float i = 0f; i <= GetTemperature(); i++)
+
+            {
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
+            }
+                   
+            IncreaseTemperature();
+
+
+
         }
 
         public override Vector2Int GetNextStep()
