@@ -33,10 +33,7 @@ namespace UnitBrains.Player
             }
                    
             IncreaseTemperature();
-
-
-
-        }
+            }
 
         public override Vector2Int GetNextStep()
         {
