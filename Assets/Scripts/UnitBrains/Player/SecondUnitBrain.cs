@@ -12,28 +12,38 @@ namespace UnitBrains.Player
         private float _temperature = 0f;
         private float _cooldownTime = 0f;
         private bool _overheated;
-        
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
             float overheatTemperature = OverheatTemperature;
 
-            //Для этого получи текущую температуру с помощью метода GetTemperature
-            //И если текущая температура больше или равна температуре перегрева - overheatTemperature, то выполнение метода следует прервать
+            // Получаем текущую температуру
+            float currentTemperature = GetTemperature();
 
-            while (GetTemperature () >= OverheatTemperature)
-                {
-                break;
-                }
-            
-            for (float i = 0f; i <= GetTemperature(); i++)
-
+            // Если текущая температура больше или равна температуре перегрева, выходим из метода
+            if (currentTemperature >= overheatTemperature)
             {
+                return; // Прервать выполнение метода
+            }
+
+            // Проверяем температуру и добавляем снаряды в список
+            for (int i = 0; i <= currentTemperature; i++)
+            {
+                // Проверяем температуру на каждой итерации
+                currentTemperature = GetTemperature(); // Обновляем текущую температуру
+
+                if (currentTemperature >= overheatTemperature)
+                {
+                    return; // Прерываем метод, если температура превышает допустимый предел
+                }
+
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
             }
-                   
+
+            // Увеличиваем температуру после выполнения всех действий
             IncreaseTemperature();
-            }
+        }
 
         public override Vector2Int GetNextStep()
         {
