@@ -29,13 +29,7 @@ namespace UnitBrains.Player
             // Проверяем температуру и добавляем снаряды в список
             for (int i = 0; i <= currentTemperature; i++)
             {
-                // Проверяем температуру на каждой итерации
-                currentTemperature = GetTemperature(); // Обновляем текущую температуру
-
-                if (currentTemperature >= overheatTemperature)
-                {
-                    return; // Прерываем метод, если температура превышает допустимый предел
-                }
+                
 
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
