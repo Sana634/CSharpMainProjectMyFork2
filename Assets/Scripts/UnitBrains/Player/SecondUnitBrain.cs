@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GluonGui.Dialog;
 using Model.Runtime.Projectiles;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace UnitBrains.Player
             // Проверяем температуру и добавляем снаряды в список
             for (int i = 0; i <= currentTemperature; i++)
             {
-                
+
 
                 var projectile = CreateProjectile(forTarget);
                 AddProjectileToList(projectile, intoList);
@@ -45,17 +46,36 @@ namespace UnitBrains.Player
         }
 
         protected override List<Vector2Int> SelectTargets()
-        {
-            ///////////////////////////////////////
-            // Homework 1.4 (1st block, 4rd module)
-            ///////////////////////////////////////
+        { 
             List<Vector2Int> result = GetReachableTargets();
+        
+            if (result.Count == 0)
+            {
+                return new List<Vector2Int>();  
+            }
+
+            Vector2Int target = new Vector2Int();
+            float minDistance = float.MaxValue;
+            foreach (Vector2Int targetenemy in result)
+            { 
+                float distance = DistanceToOwnBase(targetenemy);
+                if (distance<minDistance)
+                {
+                    minDistance = distance;
+                    target = targetenemy;
+                }
+            }
+
+            result.Clear();
+            result.Add(target);
+
             while (result.Count > 1)
             {
                 result.RemoveAt(result.Count - 1);
             }
             return result;
-            ///////////////////////////////////////
+                     
+
         }
 
         public override void Update(float deltaTime, float time)
