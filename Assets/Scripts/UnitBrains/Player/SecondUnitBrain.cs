@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-﻿using System.Collections.Generic;//Подключает пространство имен, которое содержит общие типы коллекций, такие как List
+using System.Collections.Generic;//Подключает пространство имен, которое содержит общие типы коллекций, такие как List
 using GluonGui.Dialog;// Подключает пространство имен для работы с диалогами в игровом интерфейсе
 using Model.Runtime.Projectiles;//Подключает пространство имен, относящееся к моделям снарядов, позволяя использовать их в коде.
 using UnityEngine;// Подключает пространство имен Unity, предоставляющее доступ к основным функциональным возможностям движка.
-=======
-﻿using System.Collections.Generic;
-using GluonGui.Dialog;
-using Model.Runtime.Projectiles;
-using UnityEngine;
->>>>>>> 55cb42b9d28f7cfa58eeb034c4b97b2b79900bdd
 
 namespace UnitBrains.Player//Определяет пространство имен для логики, связанной с игроком.
 {
@@ -25,7 +18,7 @@ namespace UnitBrains.Player//Определяет пространство им�
         {
             float overheatTemperature = OverheatTemperature;// Локальная переменная для хранения порога перегрева.
 
-            // Получаем текущую температуру 
+            // Получаем текущую температуру
             float currentTemperature = GetTemperature();
 
             // Если текущая температура больше или равна температуре перегрева, выходим из метода
@@ -37,10 +30,6 @@ namespace UnitBrains.Player//Определяет пространство им�
             // Проверяем температуру и добавляем снаряды в список
             for (int i = 0; i <= currentTemperature; i++)
             {
-<<<<<<< HEAD
-=======
-
->>>>>>> 55cb42b9d28f7cfa58eeb034c4b97b2b79900bdd
 
 
                 var projectile = CreateProjectile(forTarget);//Создает новый снаряд, нацеливаясь на указанную позицию.
@@ -51,12 +40,11 @@ namespace UnitBrains.Player//Определяет пространство им�
             IncreaseTemperature();
         }
 
-        public override Vector2Int GetNextStep()//метод возвращает соседнюю клетку, куда должен следовать юнит
+        public override Vector2Int GetNextStep()//Переопределяет метод для получения следующего шага; возвращает результат из базового класса.
         {
             return base.GetNextStep();
         }
 
-<<<<<<< HEAD
         protected override List<Vector2Int> SelectTargets()//Метод для выбора цели.
         {
             List<Vector2Int> result = GetReachableTargets();//Получает список доступных для атаки целей.
@@ -72,30 +60,12 @@ namespace UnitBrains.Player//Определяет пространство им�
             {
                 float distance = DistanceToOwnBase(targetenemy);//Вычисляет расстояние до своей базы.
                 if (distance < minDistance)//Если найдено более близкое расстояние, обновляет минимальное и целевое значение.
-=======
-        protected override List<Vector2Int> SelectTargets()
-        { 
-            List<Vector2Int> result = GetReachableTargets();
-        
-            if (result.Count == 0)
-            {
-                return new List<Vector2Int>();  
-            }
-
-            Vector2Int target = new Vector2Int();
-            float minDistance = float.MaxValue;
-            foreach (Vector2Int targetenemy in result)
-            { 
-                float distance = DistanceToOwnBase(targetenemy);
-                if (distance<minDistance)
->>>>>>> 55cb42b9d28f7cfa58eeb034c4b97b2b79900bdd
                 {
                     minDistance = distance;
                     target = targetenemy;
                 }
             }
 
-<<<<<<< HEAD
             result.Clear();//Очищает список доступных целей.
             result.Add(target);//Добавляет лучшую цель в список.
 
@@ -105,17 +75,6 @@ namespace UnitBrains.Player//Определяет пространство им�
             }
             return result;//Возвращает список с единственной целью.
 
-=======
-            result.Clear();
-            result.Add(target);
-
-            while (result.Count > 1)
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;
-                     
->>>>>>> 55cb42b9d28f7cfa58eeb034c4b97b2b79900bdd
 
         }
 
