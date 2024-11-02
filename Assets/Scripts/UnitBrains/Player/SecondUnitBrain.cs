@@ -14,6 +14,21 @@ namespace UnitBrains.Player//Определяет пространство им�
         private float _cooldownTime = 0f;//Переменная для отслеживания времени охлаждения.
         private bool _overheated;//Логическая переменная, указывающая, перегрелся ли снаряд.
 
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        private static int quantity_unit = 0;
+        private int number_unit; // Номер юнита
+        private const int max_goals = 3; // Максимальное количество целей для выбора
+        private Vector3 playerBasePosition; // Позиция базы игрока 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+        public SecondUnitBrain(Vector3 basePosition)
+        {
+            playerBasePosition = basePosition; // Инициализация позиции базы
+            number_unit = ++quantity_unit; // Присвоение уникального номера юниту
+        }
+
         protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)//Переопределяет метод для генерации снарядов, принимая цели и список для добавления снарядов.
         {
             float overheatTemperature = OverheatTemperature;// Локальная переменная для хранения порога перегрева.
@@ -39,45 +54,47 @@ namespace UnitBrains.Player//Определяет пространство им�
             // Увеличиваем температуру после выполнения всех действий
             IncreaseTemperature();
         }
-
-        public override Vector2Int GetNextStep()//Переопределяет метод для получения следующего шага; возвращает результат из базового класса.
+        public override Vector2Int GetNextStep() // Получение следующего шага
         {
             return base.GetNextStep();
         }
 
-        protected override List<Vector2Int> SelectTargets()//Метод для выбора цели.
+        protected override List<Vector2Int> SelectTargets() // Метод выбора целей
         {
-            List<Vector2Int> result = GetReachableTargets();//Получает список доступных для атаки целей.
+            List<Vector2Int> reachableTargets = GetReachableTargets(); // Получаем список доступных целей
 
-            if (result.Count == 0)//Если список пуст, возвращает новый пустой список.
-            {
-                return new List<Vector2Int>();
-            }
+            if (reachableTargets.Count == 0) return new List<Vector2Int>(); // Проверка на пустой список
 
-            Vector2Int target = new Vector2Int();//Переменная для хранения лучшей цели.
-            float minDistance = float.MaxValue;//Инициализирует минимальное расстояние максимальным значением.
-            foreach (Vector2Int targetenemy in result)//Перебирает все доступные цели.
+            Vector2Int bestTarget = new Vector2Int(); //Переменная для хранения лучшей цели.
+            float minDistance = float.MaxValue;//Инициализирует минимальное расстояние максимальным значением
+
+            foreach (Vector2Int enemyTarget in reachableTargets) // Перебор доступных целей
             {
-                float distance = DistanceToOwnBase(targetenemy);//Вычисляет расстояние до своей базы.
-                if (distance < minDistance)//Если найдено более близкое расстояние, обновляет минимальное и целевое значение.
+                float distance = DistanceToOwnBase(enemyTarget); //Вычисляет расстояние до своей базы.
+                if (distance < minDistance) //Если найдено более близкое расстояние, обновляет минимальное и целевое значение.
                 {
                     minDistance = distance;
-                    target = targetenemy;
+                    bestTarget = enemyTarget;
                 }
             }
 
-            result.Clear();//Очищает список доступных целей.
-            result.Add(target);//Добавляет лучшую цель в список.
-
-            while (result.Count > 1)//Удаляет лишние цели до одной (если они были).
-            {
-                result.RemoveAt(result.Count - 1);
-            }
-            return result;//Возвращает список с единственной целью.
-
-
+            List<GameObject> potentialTargets = FindPotentialTargets(); // Находим потенциальные цели
+            SortByDistanceToOwnBase(potentialTargets); // Сортируем по расстоянию до базы
+            return potentialTargets.Count > max_goals
+                ? potentialTargets.GetRange(0, max_goals).ConvertAll(target => new Vector2Int((int)target.transform.position.x, (int)target.transform.position.y))
+                : new List<Vector2Int>(); // Возвращаем отсортированные цели
         }
 
+        private void SortByDistanceToOwnBase(List<GameObject> targets) // Сортировка целей по расстоянию до базы
+        {
+            targets.Sort((a, b) => {
+                float distanceA = Vector3.Distance(a.transform.position, playerBasePosition);
+                float distanceB = Vector3.Distance(b.transform.position, playerBasePosition);
+                return distanceA.CompareTo(distanceB);
+            });
+        }
+
+       
         public override void Update(float deltaTime, float time)// Переопределяет метод обновления; принимает временные параметры
         {
             if (_overheated)//Проверяет, перегрет ли снаряд.
