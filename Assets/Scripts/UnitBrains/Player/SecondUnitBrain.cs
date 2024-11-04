@@ -14,22 +14,16 @@ namespace UnitBrains.Player//Определяет пространство им�
         private float _cooldownTime = 0f;//Переменная для отслеживания времени охлаждения.
         private bool _overheated;//Логическая переменная, указывающая, перегрелся ли снаряд.
 
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        private static int quantity_unit = 0;//счетчик юнитов
-        private int number_unit; // Номер юнита
-        private const int max_goals = 3; // Максимальное количество целей для выбора
-        private Vector3 playerBasePosition; // Позиция базы игрока 
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-        public SecondUnitBrain(Vector3 basePosition)
+        private static int _unitCounter = 0; // Статическое поле для счетчика юнитов
+        private int _unitNumber; // Номер юнита
+        private const int MaxTargets = 3; // Максимум целей для выбора
+       
+        public SecondUnitBrain()
         {
-            playerBasePosition = basePosition; // Инициализация позиции базы
-            number_unit = ++quantity_unit; // Присвоение уникального номера юниту
+            _unitNumber = _unitCounter++; // Присваиваем номер юнита и увеличиваем счетчик
         }
-
-        protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)//Переопределяет метод для генерации снарядов, принимая цели и список для добавления снарядов.
+        protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)//Переопределяет метод для генерации снарядов, принимая цели и список для добавления
+                                                                                                        //снарядов.
         {
             float overheatTemperature = OverheatTemperature;// Локальная переменная для хранения порога перегрева.
 
@@ -54,47 +48,46 @@ namespace UnitBrains.Player//Определяет пространство им�
             // Увеличиваем температуру после выполнения всех действий
             IncreaseTemperature();
         }
-        public override Vector2Int GetNextStep() // Получение следующего шага
+
+        public override Vector2Int GetNextStep()//Переопределяет метод для получения следующего шага; возвращает результат из базового класса.
         {
             return base.GetNextStep();
         }
 
-        protected override List<Vector2Int> SelectTargets() // Метод выбора целей
+        protected override List<Vector2Int> SelectTargets()
         {
-            List<Vector2Int> reachableTargets = GetReachableTargets(); // Получаем список доступных целей
+            List<Vector2Int> result = new List<Vector2Int>(); // Очищаем текущий список целей
 
-            if (reachableTargets.Count == 0) return new List<Vector2Int>(); // Проверка на пустой список
 
-            Vector2Int bestTarget = new Vector2Int(); //Переменная для хранения лучшей цели.
-            float minDistance = float.MaxValue;//Инициализирует минимальное расстояние максимальным значением
-
-            foreach (Vector2Int enemyTarget in reachableTargets) // Перебор доступных целей
+             Vector2Int GetEnemyBasePosition()
             {
-                float distance = DistanceToOwnBase(enemyTarget); //Вычисляет расстояние до своей базы.
-                if (distance < minDistance) //Если найдено более близкое расстояние, обновляет минимальное и целевое значение.
-                {
-                    minDistance = distance;
-                    bestTarget = enemyTarget;
-                }
+               
+                return new Vector2Int(5, 5);
+            }
+            // Получаем новые доступные для атаки цели
+            result = GetReachableTargets();
+
+            if (result.Count == 0) // Если нет доступных целей
+            {
+                result.Add(GetEnemyBasePosition()); // Добавляем позицию базы противника
             }
 
-            List<GameObject> potentialTargets = FindPotentialTargets(); // Находим потенциальные цели
-            SortByDistanceToOwnBase(potentialTargets); // Сортируем по расстоянию до базы
-            return potentialTargets.Count > max_goals
-                ? potentialTargets.GetRange(0, max_goals).ConvertAll(target => new Vector2Int((int)target.transform.position.x, (int)target.transform.position.y))
-                : new List<Vector2Int>(); // Возвращаем отсортированные цели
+            // Сортируем цели по расстоянию до своей базы
+            SortByDistanceToOwnBase(result);
+
+            
+            // Определим номер текущего юнита и выберем цель под соответствующим номером
+            if (result.Count > 0)
+            {
+                int targetIndex = _unitNumber % result.Count; // Выбираем цель в зависимости от номера юнита
+                Vector2Int selectedTarget = result[targetIndex];
+
+                           }
+
+            return new List<Vector2Int>(); // Если ничего не найдено, возвращаем пустой список
         }
 
-        private void SortByDistanceToOwnBase(List<GameObject> targets) // Сортировка целей по расстоянию до базы
-        {
-            targets.Sort((a, b) => {
-                float distanceA = Vector3.Distance(a.transform.position, playerBasePosition);
-                float distanceB = Vector3.Distance(b.transform.position, playerBasePosition);
-                return distanceA.CompareTo(distanceB);
-            });
-        }
-
-       
+ 
         public override void Update(float deltaTime, float time)// Переопределяет метод обновления; принимает временные параметры
         {
             if (_overheated)//Проверяет, перегрет ли снаряд.
@@ -118,7 +111,7 @@ namespace UnitBrains.Player//Определяет пространство им�
 
         private void IncreaseTemperature()//Метод для увеличения температуры.
         {
-            _temperature += 1f;///Увеличивает текущее значение температуры на 1.
+            _temperature += 1f;//Увеличивает текущее значение температуры на 1.
             if (_temperature >= OverheatTemperature) _overheated = true;//Если температура достигает максимума, устанавливает состояние перегрев
         }
     }
