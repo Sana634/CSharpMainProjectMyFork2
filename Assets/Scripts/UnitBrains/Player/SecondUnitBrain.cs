@@ -1,101 +1,125 @@
-using System.Collections.Generic;//Подключает пространство имен, которое содержит общие типы коллекций, такие как List
-using GluonGui.Dialog;// Подключает пространство имен для работы с диалогами в игровом интерфейсе
-using Model.Runtime.Projectiles;//Подключает пространство имен, относящееся к моделям снарядов, позволяя использовать их в коде.
-using UnityEngine;// Подключает пространство имен Unity, предоставляющее доступ к основным функциональным возможностям движка.
+using System.Collections.Generic;
+using Model;
+using Model.Runtime.Projectiles;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnitBrains;
+using UnitBrains.Pathfinding;
+using System.IO;
+using Utilities;
 
-namespace UnitBrains.Player//Определяет пространство имен для логики, связанной с игроком.
+namespace UnitBrains.Player
 {
-    public class SecondUnitBrain : DefaultPlayerUnitBrain//Объявляет класс SecondUnitBrain, который наследует поведение от DefaultPlayerUnitBrain.
+    public class SecondUnitBrain : DefaultPlayerUnitBrain
     {
-        public override string TargetUnitName => "Cobra Commando";//Задает имя целевой единицы
-        private const float OverheatTemperature = 3f;//Константа, определяющая порог температуры перегрева.
-        private const float OverheatCooldown = 2f;//Константа, определяющая время охлаждения после перегрева.
-        private float _temperature = 0f;//Переменная для хранения текущей температуры.
-        private float _cooldownTime = 0f;//Переменная для отслеживания времени охлаждения.
-        private bool _overheated;//Логическая переменная, указывающая, перегрелся ли снаряд.
+        public override string TargetUnitName => "Cobra Commando";
+        private const float OverheatTemperature = 3f;
+        private const float OverheatCooldown = 2f;
+        private float _temperature = 0f;
+        private float _cooldownTime = 0f;
+        private bool _overheated;
 
-        private static int _unitCounter = 0; // Статическое поле для счетчика юнитов
-        private int _unitNumber; // Номер юнита
-        private const int MaxTargets = 3; // Максимум целей для выбора
-       
+        private List<Vector2Int> TargetsOutOfRange = new List<Vector2Int>();
+
+        private static int _unitIndex = 0;
+        private const int MaxTargets = 4;
+        public int UnitID { get; private set; }
+
         public SecondUnitBrain()
         {
-            _unitNumber = _unitCounter++; // Присваиваем номер юнита и увеличиваем счетчик
+            UnitID = _unitIndex++;
+            Debug.Log($"Unit id is: {UnitID}");
         }
-        protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)//Переопределяет метод для генерации снарядов, принимая цели и список для добавления
-                                                                                                        //снарядов.
+
+        protected override void GenerateProjectiles(Vector2Int forTarget, List<BaseProjectile> intoList)
         {
-            float overheatTemperature = OverheatTemperature;// Локальная переменная для хранения порога перегрева.
+            float overheatTemperature = OverheatTemperature;
+            float temp = GetTemperature();
 
-            // Получаем текущую температуру
-            float currentTemperature = GetTemperature();
+            if (temp >= overheatTemperature) return;
 
-            // Если текущая температура больше или равна температуре перегрева, выходим из метода
-            if (currentTemperature >= overheatTemperature)//Проверяет, не перегрелся ли снаряд. Если перегрет, выполнение метода прекращается.
-            {//
-                return; // Прервать выполнение метода
-            }
-
-            // Проверяем температуру и добавляем снаряды в список
-            for (int i = 0; i <= currentTemperature; i++)
+            for (int i = 0; i <= temp; i++)
             {
-
-
-                var projectile = CreateProjectile(forTarget);//Создает новый снаряд, нацеливаясь на указанную позицию.
-                AddProjectileToList(projectile, intoList);//Добавляет созданный снаряд в список.
+                var projectile = CreateProjectile(forTarget);
+                AddProjectileToList(projectile, intoList);
             }
 
-            // Увеличиваем температуру после выполнения всех действий
             IncreaseTemperature();
+
         }
 
-        public override Vector2Int GetNextStep()//Переопределяет метод для получения следующего шага; возвращает результат из базового класса.
+        public override Vector2Int GetNextStep()
         {
-            return base.GetNextStep();
-        }
+            Vector2Int target = TargetsOutOfRange.Count > 0 ? TargetsOutOfRange[0] : unit.Pos;
 
-        protected override List<Vector2Int> SelectTargets()
-        {
-            List<Vector2Int> result = new List<Vector2Int>(); // Очищаем текущий список целей
-
-
-             Vector2Int GetEnemyBasePosition()
+            if (IsTargetInRange(target))
             {
-               
-                return new Vector2Int(5, 5);
+                return unit.Pos;
             }
-            // Получаем новые доступные для атаки цели
-            result = GetReachableTargets();
-
-            if (result.Count == 0) // Если нет доступных целей
+            else
             {
-                result.Add(GetEnemyBasePosition()); // Добавляем позицию базы противника
+                return unit.Pos.CalcNextStepTowards(target);
             }
 
-            // Сортируем цели по расстоянию до своей базы
-            SortByDistanceToOwnBase(result);
-
-            
-            // Определим номер текущего юнита и выберем цель под соответствующим номером
-            if (result.Count > 0)
-            {
-                int targetIndex = _unitNumber % result.Count; // Выбираем цель в зависимости от номера юнита
-                Vector2Int selectedTarget = result[targetIndex];
-
-                           }
-
-            return new List<Vector2Int>(); // Если ничего не найдено, возвращаем пустой список
         }
 
- 
-        public override void Update(float deltaTime, float time)// Переопределяет метод обновления; принимает временные параметры
+        protected override List<Vector2Int> SelectTargets()//�������������� ����� ��� ������ ����� ��� ����� ��� �����������.
         {
-            if (_overheated)//Проверяет, перегрет ли снаряд.
+            List<Vector2Int> result = new List<Vector2Int>();//������� ����� ������ ��� �������� ��������� �����.
+            Vector2Int targetPosition;//��������� ���������� ��� �������� ������� ��������� ����.
+
+            TargetsOutOfRange.Clear();//������� ������ �����
+
+            foreach (Vector2Int target in GetAllTargets()) // �������� �� ���� ��������� �����, ������������ ������� GetAllTargets.
             {
-                _cooldownTime += Time.deltaTime;//Увеличивает время охлаждения на прошедшее время.
-                float t = _cooldownTime / (OverheatCooldown / 10);//Нормализует время охлаждения.
-                _temperature = Mathf.Lerp(OverheatTemperature, 0, t);//Интерполирует температуру от максимума до нуля, основанное на времени охлаждения.
-                if (t >= 1)// Если охлаждение завершено, сбрасывает таймер и перегрев.
+                TargetsOutOfRange.Add(target);//���������� ������ ���� � ������ TargetsOutOfRange.
+            }
+
+            if (TargetsOutOfRange.Count == 0) //��������, ���� ������ ����� ����.
+            {
+                int enemyBaseId = IsPlayerUnitBrain ? RuntimeModel.BotPlayerId : RuntimeModel.PlayerId; // ���������� ������������� ���� ����������
+                Vector2Int enemyBase = runtimeModel.RoMap.Bases[enemyBaseId];//�������� ������� ���� ���������� �� �����.
+                TargetsOutOfRange.Add(enemyBase);//��������� ���� ���������� � ������ �����.
+            }
+            else
+            {
+                SortByDistanceToOwnBase(TargetsOutOfRange); //��������� ������ ����� � ����������� �� �� ���������� �� ���� �����.
+
+                int targetIndex = UnitID % MaxTargets;//���������� ���������� ������������� ����� ��� ����������� ������� ����, ������� ���� �� ���������������� ������.
+
+                if (targetIndex > (TargetsOutOfRange.Count - 1)) //���������, ������� �� ������ �� ������� ��������� �����.
+                {
+                    targetPosition = TargetsOutOfRange[0];//��� ������ ��������� ���������� �����, ��������������� ������ ����.
+                }
+                else
+                {
+                    if (targetIndex == 0)
+                    {
+                        targetPosition = TargetsOutOfRange[targetIndex];
+                    }
+                    else
+                    {
+                        targetPosition = TargetsOutOfRange[targetIndex - 1];
+                    }
+
+                }
+
+                if (IsTargetInRange(targetPosition)) //���������, ��������� �� ��������� ���� � �������� ������������.
+                    result.Add(targetPosition);//��������� ���� � �������������� ������.
+            }
+
+            return result;
+
+        }
+
+        public override void Update(float deltaTime, float time)
+        {
+            if (_overheated)
+            {
+                _cooldownTime += Time.deltaTime;
+                float t = _cooldownTime / (OverheatCooldown / 10);
+                _temperature = Mathf.Lerp(OverheatTemperature, 0, t);
+                if (t >= 1)
                 {
                     _cooldownTime = 0;
                     _overheated = false;
@@ -103,16 +127,16 @@ namespace UnitBrains.Player//Определяет пространство им�
             }
         }
 
-        private int GetTemperature()//Метод для получения текущей температуры.
+        private int GetTemperature()
         {
-            if (_overheated) return (int)OverheatTemperature;//Если перегрев, возвращает максимальную температуру.
-            else return (int)_temperature;//В противном случае возвращает текущее значение температуры.
+            if (_overheated) return (int)OverheatTemperature;
+            else return (int)_temperature;
         }
 
-        private void IncreaseTemperature()//Метод для увеличения температуры.
+        private void IncreaseTemperature()
         {
-            _temperature += 1f;//Увеличивает текущее значение температуры на 1.
-            if (_temperature >= OverheatTemperature) _overheated = true;//Если температура достигает максимума, устанавливает состояние перегрев
+            _temperature += 1f;
+            if (_temperature >= OverheatTemperature) _overheated = true;
         }
     }
 }
