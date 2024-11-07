@@ -24381,7 +24381,7 @@ MonoBehaviour:
   _maxHealth: 100
   _brainUpdateDelay: 0.25
   _moveDelay: 0.25
-  _attackDelay: 0.75
+  _attackDelay: 0.15
   _attackRange: 3.5
   _projectileType: 0
   _damage: 15
