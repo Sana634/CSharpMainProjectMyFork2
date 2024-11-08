@@ -10,11 +10,11 @@
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\bulav\\Downloads\\SecondUnitBrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|c:\\users\\bulav\\csharpmainprojectmyfork2\\assets\\scripts\\unitbrains\\player\\defaultplayerunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|C:\\Users\\bulav\\CSharpMainProjectMyFork2\\assets\\scripts\\unitbrains\\player\\defaultplayerunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\defaultplayerunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|c:\\users\\bulav\\csharpmainprojectmyfork2\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|C:\\Users\\bulav\\CSharpMainProjectMyFork2\\assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8C9A02A6-39AE-7C02-4A9A-D77437E082E9}|Root.csproj|solutionrelative:assets\\scripts\\unitbrains\\player\\secondunitbrain.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -37,8 +37,7 @@
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\DefaultPlayerUnitBrain.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABcAAAAFAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-06T13:21:59.503Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-06T13:21:59.503Z"
             },
             {
               "$type": "Document",
@@ -48,7 +47,7 @@
               "RelativeDocumentMoniker": "Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
               "ToolTip": "C:\\Users\\bulav\\CSharpMainProjectMyFork2\\Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\ThirdUnitBrain.cs",
-              "ViewState": "AQIAAEMAAAAAAAAAAAAcwDMAAAAsAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAA2AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-06T13:16:26.807Z",
               "EditorCaption": ""
@@ -63,8 +62,7 @@
               "RelativeToolTip": "..\\Downloads\\SecondUnitBrain.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABQAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-11-05T20:21:57.451Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-05T20:21:57.451Z"
             },
             {
               "$type": "Document",
@@ -76,8 +74,7 @@
               "RelativeToolTip": "Assets\\Scripts\\UnitBrains\\Player\\SecondUnitBrain.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAGsAAABYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-07-13T14:46:02.501Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-07-13T14:46:02.501Z"
             }
           ]
         }
